@@ -169,28 +169,12 @@ namespace Mono.Addins.Database
 				fullFile = Path.Combine (Path.GetTempPath (), file);
 			} while (File.Exists (fullFile));
 
-			AssemblyName aname = new AssemblyName ();
-			aname.Name = id;
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save, Path.GetTempPath ());
-			ModuleBuilder mb = ab.DefineDynamicModule (aname.Name, file);
-			TypeBuilder tb = mb.DefineType ("App", TypeAttributes.Public|TypeAttributes.Class);
-			
-			MethodBuilder fb = tb.DefineMethod("Main",
-			                                   MethodAttributes.Public |
-			                                   MethodAttributes.Static,
-			                                   typeof(int), new Type[] { typeof(string[]) });
-			
-			MethodInfo mi = typeof(SetupProcess).GetMethod ("Main", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-			
-			ILGenerator ilg = fb.GetILGenerator();
-			ilg.Emit (OpCodes.Ldarg_0);
-			ilg.EmitCall (OpCodes.Call, mi, null);
-			ilg.Emit (OpCodes.Ret);
-			
-			tb.CreateType();
-			ab.SetEntryPoint (fb, PEFileKinds.WindowApplication);
-			ab.Save (file);
-			return fullFile;
+			// net10 migration: Reflection.Emit can no longer SAVE a persisted assembly to disk
+			// (AssemblyBuilderAccess.Save / AssemblyBuilder.Save / SetEntryPoint(PEFileKinds) were removed).
+			// The emitted-exe child-process scanner (SetupProcess) is therefore unavailable on net10; scanning
+			// runs in-process via SetupLocal (see AddinDatabase.GetSetupHandler). This path is unreachable.
+			_ = id; _ = file; _ = fullFile;
+			throw new NotSupportedException ("SetupProcess (emitted child-process addin scanner) is not supported on .NET 10; scanning runs in-process via SetupLocal.");
 		}
 	}
 	

@@ -1823,13 +1823,10 @@ namespace Mono.Addins.Database
 		
 		ISetupHandler GetSetupHandler ()
 		{
-//			if (Util.IsMono)
-//				return new SetupProcess ();
-//			else
-			if (fs.RequiresIsolation)
-				return new SetupDomain ();
-			else
-				return new SetupLocal ();
+			// net10 migration: AppDomain isolation (SetupDomain) and the emitted child-process (SetupProcess)
+			// both rely on APIs removed in .NET (AppDomain.CreateDomain, System.Runtime.Remoting, Reflection.Emit
+			// assembly Save). Addin scanning therefore always runs in-process via SetupLocal on net10.
+			return new SetupLocal ();
 		}
 		
 		public void ResetConfiguration ()
