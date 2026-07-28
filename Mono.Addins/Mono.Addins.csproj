@@ -1,11 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <!-- net10 migration: converted from legacy csproj to SDK-style, hard-switched to net10.0.
-       Original preserved as Mono.Addins.csproj.net48bak. -->
-  <Import Project="..\Version.props" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <AssemblyName>Mono.Addins</AssemblyName>
-    <RootNamespace>Mono.Addins</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\mono-addins.snk</AssemblyOriginatorKeyFile>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
@@ -18,9 +13,9 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <!-- legacy source; don't fail the migration build on obsolete/warning noise -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS0618;SYSLIB0011;SYSLIB0050;SYSLIB0051</NoWarn>
   </PropertyGroup>
+  <Import Project="..\Version.props" />
   <ItemGroup>
     <!-- net10 migration: SDK globbing picks up this root-level orphan that the legacy explicit Compile list
          excluded (the real type lives in Mono.Addins/CustomConditionAttribute.cs). Remove the duplicate. -->
@@ -28,5 +23,10 @@
     <!-- net10 migration: SetupDomain uses AppDomain.CreateDomain + System.Runtime.Remoting (both removed on net10);
          it is dead now that GetSetupHandler always returns the in-process SetupLocal. -->
     <Compile Remove="Mono.Addins.Database\SetupDomain.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <!-- net10 migration: netstandard2.0 does not expose System.Reflection.Emit.AssemblyBuilder
+         (used only for `is AssemblyBuilder` guards); supplied by this package. -->
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 </Project>

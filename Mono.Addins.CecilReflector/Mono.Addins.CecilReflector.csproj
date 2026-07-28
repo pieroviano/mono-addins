@@ -1,10 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <!-- net10 migration: SDK-style, net10.0. Original preserved as *.net48bak. -->
-  <Import Project="..\Version.props" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <AssemblyName>Mono.Addins.CecilReflector</AssemblyName>
-    <RootNamespace>Mono.Addins.CecilReflector</RootNamespace>
     <PackageId>Mono.Addins.CecilReflector</PackageId>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\mono-addins.snk</AssemblyOriginatorKeyFile>
@@ -14,9 +10,9 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS0618;SYSLIB0011</NoWarn>
   </PropertyGroup>
+  <Import Project="..\Version.props" />
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
     <ProjectReference Include="..\Mono.Addins\Mono.Addins.csproj" />
